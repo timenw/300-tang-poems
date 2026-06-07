@@ -24,8 +24,8 @@ data class Poem(
 
 @Entity(tableName = "favorites")
 data class Favorite(
-    @PrimaryKey val poemId: Int,
-    val note: String = "",       // 用户笔记
-    val groupName: String = "Default", // 分组名
-    val createdAt: Long = System.currentTimeMillis()
+    @PrimaryKey val poemId: Int?,                                       // DB: INTEGER PRIMARY KEY (notNull=false)
+    @ColumnInfo(defaultValue = "''") val note: String = "",             // DB: DEFAULT ''
+    @ColumnInfo(defaultValue = "'Default'") val groupName: String = "Default", // DB: DEFAULT 'Default'
+    @ColumnInfo(defaultValue = "0") val createdAt: Long = 0L            // DB: DEFAULT 0
 )
