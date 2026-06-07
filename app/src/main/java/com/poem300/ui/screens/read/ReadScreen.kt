@@ -45,37 +45,16 @@ fun ReadScreen(
     val context = LocalContext.current
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
     var isSpeaking by remember { mutableStateOf(false) }
-    var ttsReady by remember { mutableStateOf(false) }
-    var ttsError by remember { mutableStateOf<String?>(null) }
 
     DisposableEffect(Unit) {
-        try {
-            tts = TextToSpeech(context) { status ->
-                if (status == TextToSpeech.SUCCESS) {
-                    val result = tts?.setLanguage(Locale.CHINESE)
-                    when (result) {
-                        TextToSpeech.LANG_MISSING_DATA -> {
-                            ttsError = "缺少中文语音数据，请在系统设置中下载"
-                        }
-                        TextToSpeech.LANG_NOT_SUPPORTED -> {
-                            ttsError = "不支持中文语音"
-                        }
-                        else -> {
-                            ttsReady = true
-                        }
-                    }
-                } else {
-                    ttsError = "语音引擎初始化失败 (code=$status)，请检查系统TTS设置"
-                }
+        tts = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                tts?.language = Locale.CHINESE
             }
-        } catch (e: Exception) {
-            ttsError = "语音引擎异常: ${e.message}"
         }
         onDispose {
-            try {
-                tts?.stop()
-                tts?.shutdown()
-            } catch (_: Exception) {}
+            tts?.stop()
+            tts?.shutdown()
         }
     }
 
@@ -119,41 +98,18 @@ fun ReadScreen(
                     // Read aloud
                     AssistChip(
                         onClick = {
-                            when {
-                                ttsError != null -> {
-                                    android.widget.Toast.makeText(context, ttsError, android.widget.Toast.LENGTH_LONG).show()
-                                }
-                                !ttsReady -> {
-                                    android.widget.Toast.makeText(context, "语音引擎正在初始化，请稍候...", android.widget.Toast.LENGTH_SHORT).show()
-                                }
-                                isSpeaking -> {
-                                    tts?.stop()
-                                    isSpeaking = false
-                                }
-                                else -> {
-                                    tts?.speak(poem.content, TextToSpeech.QUEUE_FLUSH, null, "poem")
-                                    isSpeaking = true
-                                }
+                            if (isSpeaking) {
+                                tts?.stop()
+                                isSpeaking = false
+                            } else {
+                                tts?.speak(poem.content, TextToSpeech.QUEUE_FLUSH, null, "poem")
+                                isSpeaking = true
                             }
                         },
-                        label = {
-                            Text(
-                                when {
-                                    isSpeaking -> "Stop"
-                                    ttsError != null -> "TTS Error"
-                                    !ttsReady -> "Loading..."
-                                    else -> "Read"
-                                }
-                            )
-                        },
+                        label = { Text(if (isSpeaking) "Stop" else "Read") },
                         leadingIcon = {
                             Icon(
-                                when {
-                                    isSpeaking -> Icons.Filled.Stop
-                                    ttsError != null -> Icons.Filled.Warning
-                                    !ttsReady -> Icons.Filled.HourglassEmpty
-                                    else -> Icons.Filled.VolumeUp
-                                },
+                                if (isSpeaking) Icons.Filled.Stop else Icons.Filled.VolumeUp,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
