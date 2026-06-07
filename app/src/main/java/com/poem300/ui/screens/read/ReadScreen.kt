@@ -109,7 +109,7 @@ fun ReadScreen(
                         label = { Text(if (isSpeaking) "Stop" else "Read") },
                         leadingIcon = {
                             Icon(
-                                if (isSpeaking) Icons.Filled.Stop else Icons.Filled.VolumeUp,
+                                if (isSpeaking) Icons.Filled.Stop else Icons.Filled.Campaign,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
