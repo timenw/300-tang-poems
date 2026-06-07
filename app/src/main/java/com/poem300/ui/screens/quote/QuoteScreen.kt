@@ -233,21 +233,21 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
 
         // Background
         val bgColor = when (style) {
-            0 -> Color(0xFFFAF8F5)
-            1 -> Color(0xFF2C3E50)
-            else -> Color(0xFFF5E6D3)
+            0 -> android.graphics.Color.parseColor("#FAF8F5")
+            1 -> android.graphics.Color.parseColor("#2C3E50")
+            else -> android.graphics.Color.parseColor("#F5E6D3")
         }
-        canvas.drawColor(bgColor.toArgb())
+        canvas.drawColor(bgColor)
 
         val textColor = when (style) {
-            0 -> Color(0xFF2C2C2C)
-            1 -> Color(0xFFECF0F1)
-            else -> Color(0xFF5D4E37)
+            0 -> android.graphics.Color.parseColor("#2C2C2C")
+            1 -> android.graphics.Color.parseColor("#ECF0F1")
+            else -> android.graphics.Color.parseColor("#5D4E37")
         }
         val accentColor = when (style) {
-            0 -> Color(0xFF5B7B8A)
-            1 -> Color(0xFFC9A96E)
-            else -> Color(0xFFC4704B)
+            0 -> android.graphics.Color.parseColor("#5B7B8A")
+            1 -> android.graphics.Color.parseColor("#C9A96E")
+            else -> android.graphics.Color.parseColor("#C4704B")
         }
 
         val paint = Paint().apply {
@@ -259,7 +259,7 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
 
         // Title
         paint.apply {
-            color = textColor.toArgb()
+            color = textColor
             textSize = 72f
             typeface = Typeface.DEFAULT
         }
@@ -268,7 +268,7 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
 
         // English title
         paint.apply {
-            color = textColor.copy(alpha = 0.6f).toArgb()
+            color = (textColor and 0xFFFFFF) or (0x99 shl 24) // 60% alpha
             textSize = 36f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
         }
@@ -277,7 +277,7 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
 
         // Divider
         paint.apply {
-            color = accentColor.copy(alpha = 0.5f).toArgb()
+            color = (accentColor and 0xFFFFFF) or (0x80 shl 24) // 50% alpha
             strokeWidth = 3f
             style = Paint.Style.STROKE
         }
@@ -286,7 +286,7 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
 
         // Content
         paint.apply {
-            color = textColor.toArgb()
+            color = textColor
             textSize = 48f
             typeface = Typeface.DEFAULT
             style = Paint.Style.FILL
@@ -298,7 +298,7 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
         }
 
         if (poem.content.split("\n").size > 4) {
-            paint.color = textColor.copy(alpha = 0.5f).toArgb()
+            paint.color = (textColor and 0xFFFFFF) or (0x80 shl 24) // 50% alpha
             canvas.drawText("···", width / 2f, y, paint)
             y += 80f
         }
@@ -307,7 +307,7 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
 
         // Divider
         paint.apply {
-            color = accentColor.copy(alpha = 0.5f).toArgb()
+            color = (accentColor and 0xFFFFFF) or (0x80 shl 24) // 50% alpha
             strokeWidth = 3f
             style = Paint.Style.STROKE
         }
@@ -316,7 +316,7 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
 
         // Author
         paint.apply {
-            color = accentColor.toArgb()
+            color = accentColor
             textSize = 30f
             typeface = Typeface.DEFAULT
             style = Paint.Style.FILL
@@ -326,7 +326,7 @@ private fun sharePoemCard(context: Context, poem: Poem, style: Int) {
 
         // Branding
         paint.apply {
-            color = textColor.copy(alpha = 0.3f).toArgb()
+            color = (textColor and 0xFFFFFF) or (0x4D shl 24) // 30% alpha
             textSize = 24f
         }
         canvas.drawText("300 Tang Poems", width / 2f, y, paint)
